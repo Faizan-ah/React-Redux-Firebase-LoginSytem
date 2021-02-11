@@ -1,6 +1,8 @@
 import React from 'react';
 import fire from './config/fire';
-import {Link} from 'react-router-dom'
+import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
+import Home from './Home.js';
+import { connect } from 'react-redux';
 class Login extends React.Component {
   constructor(props){
     super(props);
@@ -8,27 +10,37 @@ class Login extends React.Component {
       email: '',
       password: ''
     }
+    
+  }
+
+  printRedux = ()=>{
+    console.log('redux state user', this.props.user.user)
+    console.log('redux state auth', this.props.user.isAuth)
   }
 
   login = ()=> {
-    // const email = document.querySelector('#email').value;
-    // const password = document.querySelector('#password').value;
     const {
       email,
       password,
   } = this.state
-  
   console.log('in login', this.state)
   fire.auth().signInWithEmailAndPassword(email, password)
       .then((u) => {
         console.log('Successfully Logged In');
+        
         this.props.history.push('/home')
+     
       })
       .catch((err) => {
         console.log('Error: ' + err.toString());
-      })
-  }
 
+      })
+  
+}
+  // handleSubmit = (e)=>{
+  //   e.preventDefault();
+  //   this.props.signIn(this.state)
+  // }
   onChange = (event) =>{
     const target = event.target;
     const name = target.name;
@@ -39,8 +51,9 @@ class Login extends React.Component {
     }
 
   render() {
-    console.log('in login render',this.state)
+    this.printRedux()
     return (
+      <>
       <div style={{ textAlign: 'center' }}>
         <div>
           <div>Email</div>
@@ -52,10 +65,20 @@ class Login extends React.Component {
         </div>
         <button style={{margin: '10px'}} onClick={this.login}>Login</button>
         <Link to="/">go</Link>
-        
+        <div>
+          {this.props.authError ? <p>{this.props.authError}</p>:null}
+        </div>
       </div>
+      </>
     )
   }
 }
 
-export default Login;
+const mapStateToProps = (state)=>{
+  return {
+    //initialUserState 
+    user: state.user,
+  }
+}
+export default connect(mapStateToProps)(Login);
+// export default Login

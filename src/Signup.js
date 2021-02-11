@@ -32,6 +32,14 @@ class Signup extends React.Component {
         user.updateProfile({
             displayName: firstName+ ","+ lastName
         })
+
+        const dbh = fire.firestore();
+            dbh.collection("users").doc(user.uid).set({
+              email:email,
+              firstName:firstName,
+              lastName:lastName,
+              
+            });
         console.log('displayName: ', firstName, " , ", lastName)
       })
       .catch((err) => {
